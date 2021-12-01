@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Conversation;
+use App\Entity\Participant;
 use App\Repository\ConversationRepository;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Driver\PDO\Exception;
@@ -56,6 +58,36 @@ class ConversationController extends AbstractController
             $otherUser->getId(),
             $this->getUser()->getId()
         );
-        return $this->json();
+
+        if (count($conversation)){
+            throw new \Exception("The conversation already exists");
+        }
+
+        $conversation = new Conversation();
+
+        $participant = new Participant();
+        $participant->setUser($this->getUser());
+        $participant->setConversation($conversation);
+
+        $otherParticipant = new Participant();
+        $otherParticipant->setUser($otherUser);
+        $otherParticipant->setConversation($conversation);
+
+        $this->entityManager->getConnection()->beginTransaction();
+        try {
+            $this->entityManager->persist($conversation);
+            $this->entityManager->persist($participant);
+            $this->entityManager->persist($otherParticipant);
+
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        }catch (\Exception $e){
+            $this->entityManager->rollback();
+            throw $e;
+        }
+
+        return $this->json([
+            'id' => $conversation->getId()
+        ], Response::HTTP_CREATED, [], []);
     }
 }
