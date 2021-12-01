@@ -31,4 +31,28 @@ class Participant
     {
         return $this->id;
     }
+
+    public function getUser(): ?Admin
+    {
+        return $this->user;
+    }
+
+    public function setUser(?Admin $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getConversation(): ?Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(?Conversation $conversation): self
+    {
+        $this->conversation = $conversation;
+
+        return $this;
+    }
 }
