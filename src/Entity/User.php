@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\AdminRepository;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,9 +10,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity(repositoryClass=AdminRepository::class)
+ * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Table(name="`user`")
  */
-class Admin implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
@@ -32,12 +33,12 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
     private $roles = [];
 
     /**
-     * @ORM\OneToMany(targetEntity="Participant", mappedBy="admin")
+     * @ORM\OneToMany(targetEntity="Participant", mappedBy="user")
      */
     private $participants;
 
     /**
-     * @ORM\OneToMany(targetEntity="Message", mappedBy="admin")
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="user")
      */
     private $messages;
 
@@ -137,11 +138,6 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function __toString(): string
-    {
-        return $this->username;
-    }
-
     /**
      * @return Collection|Participant[]
      */
@@ -154,7 +150,7 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->participants->contains($participant)) {
             $this->participants[] = $participant;
-            $participant->setAdmin($this);
+            $participant->setUser($this);
         }
 
         return $this;
@@ -164,8 +160,8 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->participants->removeElement($participant)) {
             // set the owning side to null (unless already changed)
-            if ($participant->getAdmin() === $this) {
-                $participant->setAdmin(null);
+            if ($participant->getUser() === $this) {
+                $participant->setUser(null);
             }
         }
 
@@ -184,7 +180,7 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->messages->contains($message)) {
             $this->messages[] = $message;
-            $message->setAdmin($this);
+            $message->setUser($this);
         }
 
         return $this;
@@ -194,8 +190,8 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->messages->removeElement($message)) {
             // set the owning side to null (unless already changed)
-            if ($message->getAdmin() === $this) {
-                $message->setAdmin(null);
+            if ($message->getUser() === $this) {
+                $message->setUser(null);
             }
         }
 

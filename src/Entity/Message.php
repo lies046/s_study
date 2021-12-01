@@ -27,7 +27,7 @@ class Message
     private $content;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Admin", inversedBy="messages")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="messages")
      */
     private $user;
 
@@ -53,12 +53,12 @@ class Message
         return $this;
     }
 
-    public function getUser(): ?Admin
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?Admin $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 

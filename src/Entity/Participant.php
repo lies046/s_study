@@ -18,7 +18,7 @@ class Participant
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Admin", inversedBy="participants")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="participants")
      */
     private $user;
 
@@ -32,12 +32,12 @@ class Participant
         return $this->id;
     }
 
-    public function getUser(): ?Admin
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?Admin $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 
