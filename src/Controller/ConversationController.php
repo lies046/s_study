@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Conversation;
 use App\Entity\Participant;
+use App\Entity\User;
 use App\Repository\ConversationRepository;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Driver\PDO\Exception;
@@ -40,7 +41,6 @@ class ConversationController extends AbstractController
     #[Route('/{id}', name: 'new_conversation')]
     public function index(Request $request, int $id): Response
     {
-
         $otherUser = $request->get('otherUser', 0);
         $otherUser = $this->userRepository->find($id);
 
