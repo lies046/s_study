@@ -83,7 +83,7 @@ class MessageController extends AbstractController
 
         $message = new Message();
         $message->setContent($content)
-            ->setUser($this->userRepository->findOneBy(['id' => 1]))
+            ->setUser($this->userRepository->findOneBy(['id' => 2]))
             ->setMine(true);
         $conversation->addMessage($message)
             ->setLastMessage($message);
