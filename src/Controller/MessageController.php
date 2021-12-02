@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,11 +27,16 @@ class MessageController extends AbstractController
      * @var MessageRepository
      */
     private MessageRepository $messageRepository;
+    /**
+     * @var UserRepository
+     */
+    private UserRepository $userRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, MessageRepository $messageRepository)
+    public function __construct(EntityManagerInterface $entityManager, MessageRepository $messageRepository, UserRepository $userRepository)
     {
         $this->entityManager = $entityManager;
         $this->messageRepository = $messageRepository;
+        $this->userRepository = $userRepository;
     }
 
 
@@ -77,15 +83,15 @@ class MessageController extends AbstractController
 
         $message = new Message();
         $message->setContent($content)
-            ->setUser($user)
+            ->setUser($this->userRepository->findOneBy(['id' => 1]))
             ->setMine(true);
         $conversation->addMessage($message)
             ->setLastMessage($message);
 
         $this->entityManager->getConnection()->beginTransaction();
         try {
-            $this->entityManager->flush($message);
-            $this->entityManager->flush($conversation);
+            $this->entityManager->persist($message);
+            $this->entityManager->persist($conversation);
             $this->entityManager->flush();
             $this->entityManager->commit();
         }catch (\Exception $e){
