@@ -55,8 +55,10 @@ class ConversationRepository extends ServiceEntityRepository
             ->select($qb->expr()->count('p.conversation'))
             ->innerJoin('c.participants', 'p')
             ->where(
-                $qb->expr()->eq('p.user', ':me'),
-                $qb->expr()->eq('p.user', ':otherUser')
+                $qb->expr()->orX(
+                    $qb->expr()->eq('p.user', ':me'),
+                    $qb->expr()->eq('p.user', ':otherUser')
+                )
             )
             ->groupBy('p.conversation')
             ->having(
