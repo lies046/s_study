@@ -95,5 +95,7 @@ class ConversationController extends AbstractController
     public function getConvs()
     {
         $conversations = $this->conversationRepository->findConversationsByUser($this->getUser()->getId());
+
+        dd($conversations);
     }
 }

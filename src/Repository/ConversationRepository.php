@@ -80,7 +80,7 @@ class ConversationRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('c');
         $qb->
-            select('otherUser.username', 'c.id as conversationId', 'lm.createdAT')
+            select('otherUser.username', 'c.id as conversationId', 'lm.content' ,'lm.createdAt')
             ->innerJoin('c.participants', 'p', Join::WITH,
                 $qb->expr()->neq('p.user', ':user'))
             ->innerJoin('c.participants', 'me', Join::WITH,
@@ -91,5 +91,7 @@ class ConversationRepository extends ServiceEntityRepository
             ->where('meUser.id = :user')
             ->setParameter('user', $userId)
             ->orderBy('lm.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
     }
 }
