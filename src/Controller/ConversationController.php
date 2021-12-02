@@ -38,11 +38,11 @@ class ConversationController extends AbstractController
      * @return JsonResponse
      * @throws \Exception
      */
-    #[Route('/{id}', name: 'new_conversation')]
-    public function index(Request $request, int $id): Response
+    #[Route('/', name: 'new_conversation', methods: 'POST')]
+    public function index(Request $request): Response
     {
         $otherUser = $request->get('otherUser', 0);
-        $otherUser = $this->userRepository->find($id);
+        $otherUser = $this->userRepository->find($otherUser);
 
         if (is_null($otherUser)){
             throw new \Exception("The user was not found");
@@ -89,5 +89,11 @@ class ConversationController extends AbstractController
         return $this->json([
             'id' => $conversation->getId()
         ], Response::HTTP_CREATED, [], []);
+    }
+
+    #[Route('/', name: 'getConversations',methods: 'GET')]
+    public function getConvs()
+    {
+        $conversations = $this->conversationRepository->findConversationsByUser($this->getUser()->getId());
     }
 }
