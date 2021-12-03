@@ -43,6 +43,10 @@ class ConversationController extends AbstractController
     {
         $otherUser = $request->get('otherUser', 0);
         $otherUser = $this->userRepository->find($otherUser);
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
 
         if (is_null($otherUser)){
             throw new \Exception("The user was not found");
@@ -66,7 +70,7 @@ class ConversationController extends AbstractController
         $conversation = new Conversation();
 
         $participant = new Participant();
-        $participant->setUser($this->getUser());
+        $participant->setUser($user);
         $participant->setConversation($conversation);
 
         $otherParticipant = new Participant();
