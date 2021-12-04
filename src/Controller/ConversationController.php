@@ -96,6 +96,10 @@ class ConversationController extends AbstractController
         ], Response::HTTP_CREATED, [], []);
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/', name: 'getConversations',methods: 'GET')]
     public function getConvs(Request $request)
     {
