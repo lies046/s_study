@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\PublisherInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -93,16 +92,17 @@ class MessageController extends AbstractController
     #[Route('/{id}', name: 'newMessage', methods: 'POST')]
     public function newMessage(Request $request, Conversation $conversation, SerializerInterface $serializer)
     {
+        $user = $this->userRepository->findOneBy(['id' => 2]);
+
         $recipient = $this->participantRepository->findParticipantByConversationIdAndUserId(
           $conversation->getId(),
-          $this->getUser()->getId()
+          $user->getId()
         );
-        $user = $this->getUser();
         $content = $request->get('content', null);
 
         $message = new Message();
         $message->setContent($content)
-            ->setUser($this->userRepository->findOneBy(['id' => 2]))
+            ->setUser($user)
             ->setMine(true);
         $conversation->addMessage($message)
             ->setLastMessage($message);
@@ -123,10 +123,13 @@ class MessageController extends AbstractController
         ]);
         $update = new Update(
             [
-                sprintf('conversations/%s', $conversation->getId()),
-                sprintf('conversations/%s', $recipient->getUser()->getUserName())
+//                sprintf('conversations/%s', $conversation->getId()),
+//                sprintf('conversations/%s', $recipient->getUser()->getUserName())
+            'http://localhost/conversations/'. $conversation->getId(),
+            'http://localhost/conversations/'. $recipient->getUser()->getUserName(),
+
             ],
-            $messageSerialized,
+           $messageSerialized,
         );
         $this->hub->publish($update);
         $message->setMine(true);
