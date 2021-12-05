@@ -5,12 +5,14 @@ namespace App\Controller;
 use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/messages', name: 'messages')]
@@ -31,12 +33,17 @@ class MessageController extends AbstractController
      * @var UserRepository
      */
     private UserRepository $userRepository;
+    /**
+     * @var ParticipantRepository
+     */
+    private ParticipantRepository $participantRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, MessageRepository $messageRepository, UserRepository $userRepository)
+    public function __construct(EntityManagerInterface $entityManager, MessageRepository $messageRepository, UserRepository $userRepository, ParticipantRepository $participantRepository)
     {
         $this->entityManager = $entityManager;
         $this->messageRepository = $messageRepository;
         $this->userRepository = $userRepository;
+        $this->participantRepository = $participantRepository;
     }
 
 
@@ -78,6 +85,10 @@ class MessageController extends AbstractController
     #[Route('/{id}', name: 'newMessage', methods: 'POST')]
     public function newMessage(Request $request, Conversation $conversation)
     {
+        $recipient = $this->participantRepository->findParticipantByConversationIdAndUserId(
+          $conversation->getId(),
+          $this->getUser()->getId()
+        );
         $user = $this->getUser();
         $content = $request->get('content', null);
 
@@ -98,6 +109,15 @@ class MessageController extends AbstractController
             $this->entityManager->rollback();
             throw $e;
         }
+
+        $update = new Update(
+            [
+                sprintf('conversations/%s', $conversation->getId()),
+                sprintf('conversations/%s', $recipient->getUser()->getUserName())
+            ],
+            null,
+            []
+        );
 
 
         return $this->json($message, Response::HTTP_CREATED,[],[

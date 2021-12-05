@@ -47,4 +47,7 @@ class ParticipantRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findParticipantByConversationIdAndUserId(?int $getId, $getId1)
+    {
+    }
 }
