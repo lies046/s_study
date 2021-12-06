@@ -123,10 +123,10 @@ class MessageController extends AbstractController
         ]);
         $update = new Update(
             [
-//                sprintf('conversations/%s', $conversation->getId()),
-//                sprintf('conversations/%s', $recipient->getUser()->getUserName())
-            'http://localhost/conversations/'. $conversation->getId(),
-            'http://localhost/conversations/'. $recipient->getUser()->getUserName(),
+                sprintf('conversations/%s', $conversation->getId()),
+                sprintf('conversations/%s', $recipient->getUser()->getUserName())
+//            'http://localhost/conversations/'. $conversation->getId(),
+//            'http://localhost/conversations/'. $recipient->getUser()->getUserName(),
 
             ],
            $messageSerialized,
