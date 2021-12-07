@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
@@ -10,13 +11,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\User;
 
 class IndexController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(): Response
+    public function index(UserRepository $userRepository): Response
     {
-        $username = $this->getUser()->getUserIdentifier();
+//        $username = $this->getUser()->getUserIdentifier();
+        $username = $userRepository->find(1);
         $configuration = Configuration::forSymmetricSigner(
             new Sha256(),
             InMemory::plainText($this->getParameter('mercure_secret_key'))
@@ -24,7 +27,8 @@ class IndexController extends AbstractController
 
         $now   = new DateTimeImmutable();
         $token = $configuration->builder()
-            ->withClaim('mercure', ['subscribe' => [sprintf("/%s", $username)]])
+//            ->withClaim('mercure', ['subscribe' => [sprintf("/%s", $username)]])
+            ->withClaim('mercure', ['subscribe' => [sprintf("/%s", $username->getUserIdentifier())]])
             ->getToken($configuration->signer(), $configuration->signingKey());
         $token = $token->toString();
 

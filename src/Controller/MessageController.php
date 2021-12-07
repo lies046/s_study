@@ -131,6 +131,7 @@ class MessageController extends AbstractController
 
             ],
            $messageSerialized,
+            true
         );
         $this->hub->publish($update);
         $message->setMine(true);
