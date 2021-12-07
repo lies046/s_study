@@ -86,6 +86,7 @@ class MessageController extends AbstractController
     /**
      * @param Request $request
      * @param Conversation $conversation
+     * @param SerializerInterface $serializer
      * @return JsonResponse
      * @throws \Exception
      */

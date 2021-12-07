@@ -24,7 +24,6 @@ class IndexController extends AbstractController
 
         $now   = new DateTimeImmutable();
         $token = $configuration->builder()
-            ->issuedBy('http://localhost/')
             ->withClaim('mercure', ['subscribe' => [sprintf("/%s", $username)]])
             ->getToken($configuration->signer(), $configuration->signingKey());
         $token = $token->toString();
